@@ -1,0 +1,75 @@
+<html lang="ja"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit-cover">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <title>原神MMDテクスチャ変更ツール</title>
+	<script>
+window.addEventListener('load', () => {
+  const f = document.getElementById('file1');
+  f.addEventListener('change', async (evt) => {
+    const input = evt.target;
+    const zip = new JSZip();
+
+    for (let i = 0; i < input.files.length; i++) {
+      const file = input.files[i];
+      let fileName = file.name;
+
+      // ファイル名の置き換え
+	  
+	  //macOS用
+      fileName = fileName.replace(/\\314\\345/g, '体');
+      fileName = fileName.replace(//g, '髮');
+      fileName = fileName.replace(/ﾑﾕ/g, '颜');
+	  fileName = fileName.replace(/ｼ｡/g, '肌');
+	  //Windows用
+	  fileName = fileName.replace(/服/g, '服');
+	  fileName = fileName.replace(/髪/g, '发');
+	  fileName = fileName.replace(/顔/g, '面');
+	  
+      const fileData = await readFileAsync(file);
+      zip.file(fileName, fileData);
+    }
+
+    zip.generateAsync({ type: 'blob' }).then((blob) => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'files.zip';
+      a.textContent = 'Download ZIP';
+      a.style.textDecoration = 'none';
+      a.style.color = 'blue';
+      a.style.cursor = 'pointer';
+
+      a.style.margin = '10px';
+      a.style.fontWeight = 'bold';
+
+      a.style.display = 'inline-block';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+  });
+
+  function readFileAsync(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        resolve(event.target.result);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  }
+});
+	</script>
+  <body>
+
+<div class="main">
+	<p>原神公式から配布されるMMDモデルを日本語環境で表示させるための変換ツールです。<br>古いモデルとmacOS向けです。</p>
+	<form>
+	texフォルダの中身をアップロードしてください<br>
+	<input type="file" id="file1" multiple/>
+	
+		<p>ファイル名を変更するだけの単純なツールです。<br>ファイルはローカル上で処理されますが、自己責任でご使用ください。</p>
+</div>
+</body>
+</html>
